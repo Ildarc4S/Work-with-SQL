@@ -19,6 +19,7 @@ class Utils {
     static bool isValidName(const std::string& name);
     static bool isValidDate(const std::string& date);
     static bool isValidGender(const std::string& gender);
+    static bool checkArgumentsValid(int argc, char* argv[]);
 
    private:
     static int checkDaysInMonth(int month, int year);

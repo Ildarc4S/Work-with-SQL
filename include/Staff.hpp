@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 #include "DatabaseHandler.hpp"
 
 #define SINGLE_REQUEST_SEND 0
@@ -19,7 +21,7 @@ class Staff {
     // mode = SINGLE_REQUEST_SEND  or PACKAGE_REQUEST_SEND
     static std::vector<Staff> getFromDatabase(DatabaseHandler& db_handlere);
     static std::vector<Staff> getUniqueFromDatabase(DatabaseHandler& db_handlere);
-    static int callback(void* data, int argc, char** argv, char** azColName);
+    static int callback(void* data, int argc, char** argv, char** /*azColName*/);
     std::vector<std::string> convertObjectToVectorString();
     static void optimizeDatabaseOn(DatabaseHandler& db_handler);
     static void optimizeDatabaseOff(DatabaseHandler& db_handler);

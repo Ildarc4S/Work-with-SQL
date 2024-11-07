@@ -118,3 +118,44 @@ bool Utils::isValidDate(const std::string& date) {
 }
 
 bool Utils::isValidGender(const std::string& gender) { return gender == "Male" || gender == "Female"; }
+
+
+bool Utils::checkArgumentsValid(int argc, char* argv[]) {
+    
+    if (argc < 2 || argc > 5) {
+        std::cout << "Invalid number of arguments!" << std::endl;
+        return false;
+    }
+
+    int mode = atoi(argv[1]);
+    if (mode < 1 || mode > 6) {
+        std::cout << "Invalid mode. Please use mode between 1 and 6." << std::endl;
+        return false;
+    }
+
+    if (mode == 2 && argc != 5) {
+        std::cout << "Usage for mode 2: myApp 2 \"full_name\" \"birth_date\" \"gender\"" << std::endl;
+        return false;
+    }
+
+    if (mode == 2) {
+        std::string fullName = argv[2];
+        if (!Utils::isValidName(fullName)) {
+            std::cout << "Invalid full name format. Use \"last_name first_name middle_name\"." << std::endl;
+            return false;
+        }
+
+        std::string birthDate = argv[3];
+        if (!Utils::isValidDate(birthDate)) {
+            std::cout << "Invalid birth date format. Use \"YYYY-MM-DD\"." << std::endl;
+            return false;
+        }
+
+        std::string gender = argv[4];
+        if (!Utils::isValidGender(gender)) {
+            std::cout << "Gender must be \"Male\" or \"Female\"." << std::endl;
+            return false;
+        }
+    }
+    return true;
+}

@@ -1,7 +1,5 @@
 #include "Staff.hpp"
 
-#include <chrono>
-
 Staff::Staff(const std::string& full_name, const std::string& birth_date, const std::string& gender)
     : full_name{full_name}, birth_date{birth_date}, gender{gender} {}
 
@@ -43,13 +41,12 @@ void Staff::saveToDatabase(bool mode, DatabaseHandler& db_handler, const Staff* 
     }
 }
 
-int Staff::callback(void* data, int argc, char** argv, char** azColName) {
+int Staff::callback(void* data, int argc, char** argv, char** /*azColName*/) {
     std::vector<Staff>* names = static_cast<std::vector<Staff>*>(data);
-    for (int i = 0; i < argc; i++) {
-        std::cout << azColName[i] << ": " << (argv[i] ? argv[i] : "NULL") << std::endl;
+    if(argc == 3) {
+        names->emplace_back(
+            Staff(argv[0] ? argv[0] : "NULL", argv[1] ? argv[1] : "NULL", argv[2] ? argv[2] : "NULL"));
     }
-    names->emplace_back(
-        Staff(argv[0] ? argv[0] : "NULL", argv[1] ? argv[1] : "NULL", argv[2] ? argv[2] : "NULL"));
     return 0;
 }
 
