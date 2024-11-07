@@ -29,9 +29,9 @@ std::string Utils::getRandomFIO(int length, bool mode) {
     std::uniform_int_distribution<int> dist(0, 25);
 
     std::string result;
-    if(mode == WITHOUT_F) {
+    if (mode == WITHOUT_F) {
         result += static_cast<char>('A' + dist(engine));
-    } else if(mode == WITH_F) {
+    } else if (mode == WITH_F) {
         result += 'F';
     } else {
         mode_valid = false;
@@ -41,7 +41,7 @@ std::string Utils::getRandomFIO(int length, bool mode) {
         result += static_cast<char>('a' + dist(engine));
     }
 
-    for(int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++) {
         result += ' ';
         result += static_cast<char>('A' + dist(engine));
         for (int i = 1; i < length && mode_valid; i++) {
@@ -57,14 +57,17 @@ int Utils::checkDaysInMonth(int month, int year) {
         case 2:
             result = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
             break;
-        case 4: case 6: case 9: case 11:
+        case 4:
+        case 6:
+        case 9:
+        case 11:
             result = 30;
             break;
     }
     return result;
 }
 
-bool isValidName(const std::string& name) {
+bool Utils::isValidName(const std::string& name) {
     std::istringstream stream(name);
     std::string part;
     int count = 0;
@@ -72,7 +75,7 @@ bool isValidName(const std::string& name) {
     while (stream >> part) {
         for (char c : part) {
             if (!isalpha(c) && c != '-') {
-                return false; 
+                return false;
             }
         }
         count++;
@@ -80,20 +83,38 @@ bool isValidName(const std::string& name) {
     return count == 3;
 }
 
-bool isValidDate(const std::string& date) {
-    if (date.length() != 10 || date[4] != '-' || date[7] != '-') {
-        return false;
+bool Utils::isValidDate(const std::string& date) {
+    bool result = true;
+    if (date.size() != 10 || date[4] != '-' || date[7] != '-') {
+        result = false;
     }
 
-    for (int i = 0; i < date.length(); ++i) {
+    for (size_t i = 0; i < date.size(); i++) {
         if ((i != 4 && i != 7) && !isdigit(date[i])) {
-            return false;
+            result = false;
         }
     }
 
-    return true;
+    int month = std::stoi(date.substr(5, 2));
+    int day = std::stoi(date.substr(8, 2));
+
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+        result = false;
+    }
+
+    switch (month) {
+        case 2:
+            if (day > 29) result = false;
+            break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            if (day > 30) result = false;
+            break;
+    }
+
+    return result;
 }
 
-bool isValidGender(const std::string& gender) {
-    return gender == "Male" || gender == "Female";
-}
+bool Utils::isValidGender(const std::string& gender) { return gender == "Male" || gender == "Female"; }

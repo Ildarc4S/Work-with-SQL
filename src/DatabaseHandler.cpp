@@ -20,29 +20,22 @@
 //     void closeDatabase();
 // };
 
-
-DatabaseHandler::DatabaseHandler(const std::string& db_name) {
-    openDatabase(db_name);
-}
-DatabaseHandler::~DatabaseHandler() {
-    closeDatabase();
-}
+DatabaseHandler::DatabaseHandler(const std::string& db_name) { openDatabase(db_name); }
+DatabaseHandler::~DatabaseHandler() { closeDatabase(); }
 
 void DatabaseHandler::createTable(const std::string& table_name,
-                             std::initializer_list<
-                                 std::pair<std::string, std::string>
-                             > columns_names) {
+                                  std::initializer_list<std::pair<std::string, std::string>> columns_names) {
     std::ostringstream query;
     query << "CREATE TABLE " << table_name << " (";
     query << "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, ";
-    for(auto iter = columns_names.begin(); iter != columns_names.end(); iter++) {
+    for (auto iter = columns_names.begin(); iter != columns_names.end(); iter++) {
         query << iter->first << " " << iter->second;
-        if(iter + 1 != columns_names.end()) {
+        if (iter + 1 != columns_names.end()) {
             query << ", ";
         }
     }
     query << ");";
-    if(executeQuery(query.str())) {
+    if (executeQuery(query.str())) {
         std::cout << "Database is created!" << std::endl;
     } else {
         std::cerr << "Database is not created!" << std::endl;
@@ -50,12 +43,10 @@ void DatabaseHandler::createTable(const std::string& table_name,
 }
 
 void DatabaseHandler::insert(const std::string& table_name,
-                             const std::initializer_list<
-                                    std::pair<std::string, std::string>
-                                   >values) {
+                             const std::initializer_list<std::pair<std::string, std::string>> values) {
     std::ostringstream query;
     query << "INSERT INTO " << table_name << " (";
-    
+
     for (auto iter = values.begin(); iter != values.end(); iter++) {
         query << iter->first;
         if (iter + 1 != values.end()) {
@@ -71,19 +62,14 @@ void DatabaseHandler::insert(const std::string& table_name,
     }
 
     query << ");";
-    std::cout << query.str();
+    std::cout << query.str() << std::endl;
     executeQuery(query.str());
 }
 
-bool DatabaseHandler::select(const std::string& table_name,
-                             const std::initializer_list<std::string> columns,
-                             const std::string& where_filter,
-                             const std::string& like_filter,
-                             const std::string& order_by,
-                             const int limit,
-                             int (*callback)(void*, int, char**, char**),
-                             void* data) {
-
+bool DatabaseHandler::select(const std::string& table_name, const std::initializer_list<std::string> columns,
+                             const std::string& where_filter, const std::string& like_filter,
+                             const std::string& order_by, const int limit,
+                             int (*callback)(void*, int, char**, char**), void* data) {
     std::ostringstream query;
     query << "SELECT ";
 
@@ -123,14 +109,10 @@ bool DatabaseHandler::select(const std::string& table_name,
 }
 
 bool DatabaseHandler::selectUnique(const std::string& table_name,
-                             const std::initializer_list<std::string> columns,
-                             const std::string& where_filter,
-                             const std::string& like_filter,
-                             const std::string& order_by,
-                             const int limit,
-                             int (*callback)(void*, int, char**, char**),
-                             void* data) {
-
+                                   const std::initializer_list<std::string> columns,
+                                   const std::string& where_filter, const std::string& like_filter,
+                                   const std::string& order_by, const int limit,
+                                   int (*callback)(void*, int, char**, char**), void* data) {
     std::ostringstream query;
     query << "SELECT DISTINCT ";
 
@@ -169,9 +151,8 @@ bool DatabaseHandler::selectUnique(const std::string& table_name,
     return executeQuery(query.str(), callback, data);
 }
 
-bool DatabaseHandler::executeQuery(const std::string& query, 
-                                    int (*callback)(void*, int, char**, char**), 
-                                    void* data) {
+bool DatabaseHandler::executeQuery(const std::string& query, int (*callback)(void*, int, char**, char**),
+                                   void* data) {
     bool result = true;
     char* error_message = nullptr;
     if (sqlite3_exec(data_base, query.c_str(), callback, data, &error_message) != SQLITE_OK) {
@@ -183,17 +164,15 @@ bool DatabaseHandler::executeQuery(const std::string& query,
     return result;
 }
 
-bool DatabaseHandler::sendPackage(const std::string& table_name, 
-                                  std::initializer_list<std::string> columns,
+bool DatabaseHandler::sendPackage(const std::string& table_name, std::initializer_list<std::string> columns,
                                   const std::vector<std::vector<std::string>>& records) {
-
     if (!executeQuery("BEGIN TRANSACTION;")) {
         std::cerr << "Failed to start transaction.\n";
         return false;
     }
-    
+
     sqlite3_stmt* stmt = nullptr;
-    
+
     std::ostringstream query;
     query << "INSERT INTO " << table_name << " (";
     for (auto iter = columns.begin(); iter != columns.end(); ++iter) {
@@ -225,7 +204,7 @@ bool DatabaseHandler::sendPackage(const std::string& table_name,
         if (sqlite3_step(stmt) != SQLITE_DONE) {
             std::cerr << "SQLITE step error! " << sqlite3_errmsg(data_base) << "\n";
             sqlite3_finalize(stmt);
-            executeQuery("ROLLBACK;"); 
+            executeQuery("ROLLBACK;");
             return false;
         }
 
@@ -233,24 +212,24 @@ bool DatabaseHandler::sendPackage(const std::string& table_name,
     }
     executeQuery("COMMIT;");
     sqlite3_finalize(stmt);
-    
+
     return true;
 }
 
-bool DatabaseHandler::optimizeDatabaseOn(const std::string& table_name, 
-                          std::initializer_list<std::string> column_names) {
+bool DatabaseHandler::optimizeDatabaseOn(const std::string& table_name,
+                                         std::initializer_list<std::string> column_names) {
     std::ostringstream query;
     query << "CREATE INDEX idx_";
-    for(auto iter = column_names.begin(); iter != column_names.end(); iter++) {
+    for (auto iter = column_names.begin(); iter != column_names.end(); iter++) {
         query << *iter;
-        if(iter+1 != column_names.end()) {
+        if (iter + 1 != column_names.end()) {
             query << "_";
         }
     }
 
     query << " ON " << table_name << " (";
 
-     for (auto it = column_names.begin(); it != column_names.end(); ++it) {
+    for (auto it = column_names.begin(); it != column_names.end(); ++it) {
         query << *it;
         if (std::next(it) != column_names.end()) {
             query << ", ";
@@ -261,13 +240,12 @@ bool DatabaseHandler::optimizeDatabaseOn(const std::string& table_name,
     return executeQuery(query.str());
 }
 
-bool DatabaseHandler::optimizeDatabaseOff(const std::string& table_name, 
-                          std::initializer_list<std::string> column_names) {
+bool DatabaseHandler::optimizeDatabaseOff(std::initializer_list<std::string> column_names) {
     std::ostringstream query;
     query << "DROP INDEX idx_";
-    for(auto iter = column_names.begin(); iter != column_names.end(); iter++) {
+    for (auto iter = column_names.begin(); iter != column_names.end(); iter++) {
         query << *iter;
-        if(iter+1 != column_names.end()) {
+        if (iter + 1 != column_names.end()) {
             query << "_";
         }
     }
@@ -277,10 +255,9 @@ bool DatabaseHandler::optimizeDatabaseOff(const std::string& table_name,
     return executeQuery(query.str());
 }
 
-
 bool DatabaseHandler::openDatabase(const std::string& db_name) {
     bool result = true;
-    if(sqlite3_open(db_name.c_str(), &data_base) == SQLITE_OK) {
+    if (sqlite3_open(db_name.c_str(), &data_base) == SQLITE_OK) {
         std::cout << "Database is open!" << std::endl;
     } else {
         result = false;
@@ -290,7 +267,7 @@ bool DatabaseHandler::openDatabase(const std::string& db_name) {
 }
 
 void DatabaseHandler::closeDatabase() {
-    if(data_base != nullptr) {
+    if (data_base != nullptr) {
         sqlite3_close(data_base);
         data_base = nullptr;
         std::cout << "Database is closed!" << std::endl;
