@@ -36,7 +36,7 @@ class DatabaseHandler {
     bool optimizeDatabaseOn(const std::string& table_name, std::initializer_list<std::string> column_names);
     bool optimizeDatabaseOff(std::initializer_list<std::string> column_names);
 
-private:
+   private:
     sqlite3* data_base = nullptr;
     bool openDatabase(const std::string& db_name);
     void closeDatabase();

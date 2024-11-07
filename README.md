@@ -37,11 +37,6 @@
     ```bash
     sudo apt-get install sqlite3 libsqlite3-dev
     ```
-* Для CentOS/Fedora/RedHat:
-
-    ```bash
-    sudo yum install sqlite sqlite-devel
-    ```  
 * Для Arch:  
 
     ```bash
@@ -53,11 +48,6 @@
     ```bash
     sudo apt-get install gcc
     ```
-* Для CentOS/Fedora/RedHat:
-
-    ```bash
-    sudo yum install gcc
-    ```  
 * Для Arch:  
 
     ```bash
@@ -69,11 +59,6 @@
     ```bash
     sudo apt-get install cmake
     ```
-* Для CentOS/Fedora/RedHat:
-
-    ```bash
-    sudo yum install cmake
-    ```  
 * Для Arch:  
 
     ```bash

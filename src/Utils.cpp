@@ -119,9 +119,7 @@ bool Utils::isValidDate(const std::string& date) {
 
 bool Utils::isValidGender(const std::string& gender) { return gender == "Male" || gender == "Female"; }
 
-
 bool Utils::checkArgumentsValid(int argc, char* argv[]) {
-    
     if (argc < 2 || argc > 5) {
         std::cout << "Invalid number of arguments!" << std::endl;
         return false;

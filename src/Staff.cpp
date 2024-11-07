@@ -43,7 +43,7 @@ void Staff::saveToDatabase(bool mode, DatabaseHandler& db_handler, const Staff* 
 
 int Staff::callback(void* data, int argc, char** argv, char** /*azColName*/) {
     std::vector<Staff>* names = static_cast<std::vector<Staff>*>(data);
-    if(argc == 3) {
+    if (argc == 3) {
         names->emplace_back(
             Staff(argv[0] ? argv[0] : "NULL", argv[1] ? argv[1] : "NULL", argv[2] ? argv[2] : "NULL"));
     }

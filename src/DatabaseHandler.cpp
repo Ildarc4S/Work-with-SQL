@@ -130,7 +130,7 @@ bool DatabaseHandler::executeQuery(const std::string& query, int (*callback)(voi
     bool result = true;
     char* error_message = nullptr;
     if (sqlite3_exec(data_base, query.c_str(), callback, data, &error_message) != SQLITE_OK) {
-        std::cerr << "ERROR: "<< error_message << std::endl;
+        std::cerr << "ERROR: " << error_message << std::endl;
         sqlite3_free(error_message);
         result = false;
     }
